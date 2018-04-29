@@ -83,7 +83,7 @@ class Slider extends Component {
 }
 
 Slider.defaultProps = {
-  slidesToScroll: 3,
+  slidesToScroll: 2,
   slidesVisible: 2,
   loop: false,
   pagination: false,
