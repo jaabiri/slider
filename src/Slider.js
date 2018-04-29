@@ -62,6 +62,7 @@ class Slider extends Component {
           slidesToScroll={this.props.slidesToScroll}
            currentItem={this.state.currentItem}
            childrenLength={children.length}
+           slidesToShow={slidesVisible}
              />
         <div
           className="carousel__container"
@@ -83,7 +84,7 @@ class Slider extends Component {
 }
 
 Slider.defaultProps = {
-  slidesToScroll: 2,
+  slidesToScroll: 1,
   slidesVisible: 2,
   loop: false,
   pagination: false,
