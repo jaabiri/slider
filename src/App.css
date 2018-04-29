@@ -13,6 +13,10 @@ body {
   line-height: 1.4;
 }
 
+.demo{
+   height: 250px;
+   margin-bottom:50px;
+}
 .title {
   font-size: 25px;
   color: #FFF;
@@ -21,26 +25,31 @@ body {
 }
 
 .item {
-  margin: 40px 10px;
+  margin: 0px 10px;
   background-color: #fff;
   box-shadow: 0 15px 35px #3232321a,0 5px 15px #0000001a;
   transition: transform 0.3s;
   transform: translate3d(0, -1px, 0);
+  height: 95%;
 }
 
 .item:hover  {
   transform: translate3d(0, -10px, 0);
 }
-
+.item__image{
+   height: 95%;
+}
 .item img {
   display: block;
   width: 100%;
   height: auto;
+  height: 100%;
 }
 
 
 .items {
   position: relative;
+  height: 95%;
 }
 
 /**
@@ -48,11 +57,13 @@ CAROUSEL
  */
 .carousel {
   position: relative;
+  height: 100%;
 }
 
 .carousel__container {
   transition: transform 0.3s;
   transform: translate3d(0, 0, 0);
+  height: 100%;
 }
 
 .carousel__container::after {
@@ -63,6 +74,7 @@ CAROUSEL
 
 .carousel__item {
   float: left;
+  height: 100%;
 }
 
 .carousel__next, .carousel__prev {
@@ -100,7 +112,7 @@ CAROUSEL
 .carousel__pagination {
   position: absolute;
   z-index: 99;
-  bottom: 0;
+  bottom: -20px;
   left: 0;
   right: 0;
   text-align: center;
