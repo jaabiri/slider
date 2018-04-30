@@ -3,57 +3,45 @@ import Arrow from './Arrow';
 import Pagination from './Pagination';
 import PropTypes from 'prop-types';
 
-const config = {
-	'1024': {
-		slidesToScroll: 1,
-		slidesVisible: 4
-	},
-	'900': {
-		slidesToScroll: 1,
-		slidesVisible: 3
-	},
-	'600': {
-		slidesToScroll: 1,
-		slidesVisible: 2
-	},
-	'480': {
-		slidesToScroll: 1,
-		slidesVisible: 1
-	}
-};
-
-const getBreakpointConfig = (breakpoint) => {
-	if (breakpoint >= 1024) return config['1024'];
-	if (breakpoint >= 900 && breakpoint < 1024) return config['900'];
-	if (breakpoint >= 600 && breakpoint < 900) return config['600'];
-	if (breakpoint <= 600) return config['480'];
+const getBreakpointConfig = ({ config }) => {
+	if (!config) return null;
+	const breakpoint = Number(window.innerWidth);
+	if (breakpoint >= 1690) return config[1690];
+	if (breakpoint >= 1280 && breakpoint < 1690) return config[1280];
+	if (breakpoint >= 980 && breakpoint < 1280) return config[980];
+	if (breakpoint >= 736 && breakpoint < 980) return config[736];
+	if (breakpoint <= 736) return config[480];
 };
 
 class Slider extends Component {
-	state = {
-		currentItem: 0,
-		slidesToScroll: 1,
-		slidesVisible: 1
-	};
+	constructor(props) {
+		super(props);
+		const effectiveConfig = (props.config && getBreakpointConfig(props)) || {
+			slidesToScroll: props.slidesToScroll,
+			slidesVisible: props.slidesVisible
+		};
+		this.state = {
+			currentItem: 0,
+			...effectiveConfig
+		};
+	}
 
 	componentDidMount = () => {
-		window.addEventListener('resize', this.resize);
-		this.resize();
+		this.props.config && window.addEventListener('resize', this.resize);
 	};
 
-	componentWillUnmount = () => {
-		window.removeEventListener('resize', this.resize);
-	};
+	componentWillUnmount = () => this.props.config && window.removeEventListener('resize', this.resize);
 
 	resize = () => {
-		const nextConfig = getBreakpointConfig(Number(window.innerWidth));
+		const nextConfig = getBreakpointConfig(this.props);
 		this.setState(nextConfig);
 	};
 
 	gotoItem = (index) => {
-		const { children, slidesVisible, loop } = this.props;
-		const { currentItem } = this.state;
+		const { children, loop } = this.props;
+		const { currentItem, slidesVisible } = this.state;
 		const childrenLength = children.length;
+
 		if (index < 0) {
 			if (loop) {
 				index = childrenLength - slidesVisible;
@@ -78,38 +66,38 @@ class Slider extends Component {
 	};
 
 	next = () => {
-		this.gotoItem(this.state.currentItem + this.props.slidesToScroll);
+		this.gotoItem(this.state.currentItem + this.state.slidesToScroll);
 	};
 
 	prev = () => {
-		this.gotoItem(this.state.currentItem - this.props.slidesToScroll);
+		this.gotoItem(this.state.currentItem - this.state.slidesToScroll);
 	};
 
 	render() {
-		const { children, slidesVisible, slidesToScroll, responsive } = this.props;
+		const { children } = this.props;
+		const { currentItem, slidesVisible, slidesToScroll } = this.state;
 
-		const effectiveConfig = {
-			slidesVisible: responsive ? this.state.slidesVisible : slidesVisible,
-			slidesToScroll: responsive ? this.state.slidesToScroll : slidesToScroll
-		};
-
-		const ratio = children.length / effectiveConfig.slidesVisible;
+		const ratio = children.length / slidesVisible;
 		const containerStyle = {
 			width: `${ratio * 100}%`
 		};
 		const childrenStyle = {
-			width: `${100 / effectiveConfig.slidesVisible / ratio}%`
+			width: `${100 / slidesVisible / ratio}%`
 		};
+
+		const leftIemsCount = children.length - (this.state.currentItem + slidesVisible);
+		console.log('leftIemsCount', leftIemsCount);
+
 		return (
 			<div className="carousel">
-				<Arrow className="carousel__next" handleClick={this.next} />
+				<Arrow className="carousel__next" handleClick={this.next} disabled={leftIemsCount <= 0} />
 				<Arrow className="carousel__prev" handleClick={this.prev} />
 				<Pagination
 					onMove={this.gotoItem}
-					slidesToScroll={effectiveConfig.slidesToScroll}
-					currentItem={this.state.currentItem}
+					slidesToScroll={slidesToScroll}
+					currentItem={currentItem}
 					childrenLength={children.length}
-					slidesToShow={effectiveConfig.slidesVisible}
+					slidesToShow={slidesVisible}
 				/>
 				<div className="carousel__container" style={containerStyle} ref={(c) => (this.container = c)}>
 					{this.props.children.map((child, index) =>
@@ -139,7 +127,8 @@ Slider.propTypes = {
 	slidesVisible: PropTypes.number,
 	loop: PropTypes.bool,
 	pagination: PropTypes.bool,
-	navigation: PropTypes.bool
+	navigation: PropTypes.bool,
+	config: PropTypes.object
 };
 
 export default Slider;
