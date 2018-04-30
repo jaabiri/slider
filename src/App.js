@@ -8,7 +8,7 @@ class App extends Component {
 	render() {
 		return (
 			<div>
-				<h1 style={{ color: '#fff', textAlign: 'center' }}>this slider is reponsive</h1>
+				<h1 style={{ color: '#fff', textAlign: 'center' }}>this slider is responsive</h1>
 				<div className="demo">
 					<Slider responsive>
 						{data.map(({ src, description }, index) => (
