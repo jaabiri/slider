@@ -2,9 +2,7 @@ import React from 'react';
 
 const Pagination = ({ childrenLength, slidesToScroll, currentItem, slidesToShow, onMove }) => {
 	const count = Math.ceil((childrenLength - slidesToShow) / slidesToScroll) + 1;
-	console.log('count', count);
 	const buttonPagination = Array.apply(null, Array(count + 1).join('0').split('')).map((_, i) => {
-		console.log('slidesToScroll', slidesToScroll);
 		const j = i ? i * slidesToScroll : i;
 		const className =
 			currentItem === j
