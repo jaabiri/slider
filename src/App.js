@@ -7,23 +7,23 @@ import './App.css';
 const config = {
 	1690: {
 		slidesToScroll: 1,
-		slidesVisible: 3
+		slidesVisible: 6
 	},
 	1280: {
 		slidesToScroll: 1,
-		slidesVisible: 4
+		slidesVisible: 5
 	},
 	980: {
 		slidesToScroll: 1,
-		slidesVisible: 3
+		slidesVisible: 4
 	},
 	736: {
 		slidesToScroll: 1,
-		slidesVisible: 2
+		slidesVisible: 3
 	},
 	480: {
 		slidesToScroll: 1,
-		slidesVisible: 1
+		slidesVisible: 2
 	}
 };
 

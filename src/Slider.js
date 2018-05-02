@@ -3,23 +3,49 @@ import Arrow from './Arrow';
 import Pagination from './Pagination';
 import PropTypes from 'prop-types';
 
-const getBreakpointConfig = ({ config }) => {
-	if (!config) return null;
+const getCurrentBoundaries = ({ sortedAxis, breakpoint, first, last, breakPointIndex }) => {
+	if (first === breakpoint) return { before: null, after: sortedAxis[1] };
+	if (last === breakpoint) return { before: sortedAxis[sortedAxis.length - 2], after: null };
+	return { before: sortedAxis[breakPointIndex - 1], after: sortedAxis[breakPointIndex + 1] };
+};
+
+const getBreakpointConfig = ({ config, slidesToScroll, slidesVisible }) => {
+	if (!config)
+		return {
+			slidesToScroll,
+			slidesVisible
+		};
+
 	const breakpoint = Number(window.innerWidth);
-	if (breakpoint >= 1690) return config[1690];
-	if (breakpoint >= 1280 && breakpoint < 1690) return config[1280];
-	if (breakpoint >= 980 && breakpoint < 1280) return config[980];
-	if (breakpoint >= 736 && breakpoint < 980) return config[736];
-	if (breakpoint <= 736) return config[480];
+	const breakpointAxis = Object.keys(config);
+
+	const { max, min } = breakpointAxis.reduce(
+		(acc, item) => ({
+			min: (item < acc.min && item) || acc.min,
+			max: (item > acc.max && item) || acc.max
+		}),
+		{ min: breakpointAxis[0], max: breakpointAxis[0] }
+	);
+
+	const sortedAxis =
+		breakpoint == min
+			? [ breakpoint, ...breakpointAxis ].sort((a, b) => (Number(a) > Number(b) ? 1 : -1))
+			: [ ...breakpointAxis, breakpoint ].sort((a, b) => (Number(a) > Number(b) ? 1 : -1));
+
+	const [ first, last ] = [ sortedAxis[0], sortedAxis[sortedAxis.length - 1] ];
+
+	const breakPointIndex = sortedAxis.indexOf(breakpoint);
+
+	const { before, after } = getCurrentBoundaries({ sortedAxis, breakpoint, first, last, breakPointIndex });
+
+	if (after && before) return config[before];
+	return config[after] || config[before];
 };
 
 class Slider extends Component {
 	constructor(props) {
 		super(props);
-		const effectiveConfig = (props.config && getBreakpointConfig(props)) || {
-			slidesToScroll: props.slidesToScroll,
-			slidesVisible: props.slidesVisible
-		};
+		const effectiveConfig = getBreakpointConfig(props);
 		this.state = {
 			currentItem: 0,
 			...effectiveConfig
@@ -86,7 +112,6 @@ class Slider extends Component {
 		};
 
 		const leftIemsCount = children.length - (this.state.currentItem + slidesVisible);
-		console.log('leftIemsCount', leftIemsCount);
 
 		return (
 			<div className="carousel">
